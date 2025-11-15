@@ -31,8 +31,8 @@ The project is intended to be expanded into an interactive portfolio showcasing 
 ## Features
 
 - User Authentication: Users can register, log in, and log out.
-- Protected Index Page: `/main` checks if a user is logged in.
-  - Logged-in users see `users.html` (confirmation they are authenticated).
+- Protected Index Page: /main checks if a user is logged in.
+  - Logged-in users see users.html (confirmation they are authenticated).
   - Unauthenticated users are redirected to the login page.
 - Basic Sessions: User authentication uses Django’s built-in sessions.
 - Backend-Focused: Currently focuses on backend; frontend enhancements are planned.
@@ -62,43 +62,43 @@ website/
     └── db.sqlite3
 .gitignore
 README.md
-requirements.txt
 
-- `main`: Custom app with endpoints, templates, and forms.
-- `my_website`: Default Django project folder (settings, URLs, WSGI).
-- `db.sqlite3`: Local SQLite database (git-ignored).
+Explanation:
+
+- main: Custom app containing endpoints, templates, and forms.
+- my_website: Default Django project folder with settings, URLs, and WSGI.
+- db.sqlite3: Local SQLite database (git-ignored).
 
 ---
 
 ## Installation
 
-1. Clone the repository
+1. Clone the repository:
 
-   git clone https://github.com/OhACD/website
-   cd website/my_website
+git clone https://github.com/OhACD/website
+cd website/my_website
 
-2. Create a virtual environment and activate it
+2. Create a virtual environment and activate it:
 
-   python -m venv .venv
-   # Windows
-   .venv\Scripts\Activate.ps1
-   # Linux/Mac
-   source .venv/bin/activate
+python -m venv .venv
+# Windows
+.venv\Scripts\Activate.ps1
+# Linux/Mac
+source .venv/bin/activate
 
-3. Install dependencies
+3. Install dependencies:
 
-   pip install -r requirements.txt
+pip install -r requirements.txt
 
-4. Apply migrations
+4. Apply migrations:
 
-   python manage.py migrate
+python manage.py migrate
 
-5. Run the development server
+5. Run the development server:
 
-   python manage.py runserver
+python manage.py runserver
 
-6. Access the site
-Open your browser at http://127.0.0.1:8000/main
+6. Access the site at: http://127.0.0.1:8000/main
 
 ---
 
@@ -115,10 +115,10 @@ Note: Full session management and advanced user session features are planned for
 
 ## Future Development
 
-- Implement advanced session management (remember me, session expiration, etc.).
-- Build interactive portfolio pages with dynamic content.
-- Add frontend enhancements using modern styling or React components.
-- Include analytics and project tracking for portfolio items.
+- Implement advanced session management (remember me, session expiration, etc.)
+- Build interactive portfolio pages with dynamic content
+- Add frontend enhancements using modern styling or React components
+- Include analytics and project tracking for portfolio items
 
 ---
 
