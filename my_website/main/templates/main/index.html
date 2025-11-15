@@ -1,0 +1,7 @@
+{% extends "main/layout.html" %}
+    {% block body %}
+        <h1>Hello, user!</h>
+        <p>This should be up and running in no time just keep it tight</p>
+        <a href="{% url 'login' %}" method="get">Log in</a>
+        <a href="{% url 'signup' %}" method="get">Sign up</a>
+    {% endblock %}

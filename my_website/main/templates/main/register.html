@@ -1,0 +1,15 @@
+{% extends "main/layout.html" %}
+
+{% block body %}
+<h1>Sign Up</h1>
+
+{% if message %}
+    <div class="message">{{ message }}</div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create Account</button>
+</form>
+{% endblock %}
