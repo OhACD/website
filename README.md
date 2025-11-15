@@ -8,7 +8,6 @@ A Django-based personal website project aimed at building an advanced portfolio 
 
 - Overview
 - Features
-- Project Structure
 - Installation
 - Usage
 - Future Development
@@ -36,38 +35,6 @@ The project is intended to be expanded into an interactive portfolio showcasing 
   - Unauthenticated users are redirected to the login page.
 - Basic Sessions: User authentication uses Django’s built-in sessions.
 - Backend-Focused: Currently focuses on backend; frontend enhancements are planned.
-
----
-
-## Project Structure
-
-website/
-└── my_website/
-    ├── main/
-    │   ├── migrations/
-    │   ├── templates/
-    │   │   └── main/
-    │   │       ├── layout.html
-    │   │       ├── login.html
-    │   │       ├── register.html
-    │   │       └── users.html
-    │   ├── models.py
-    │   ├── views.py
-    │   └── urls.py
-    ├── my_website/
-    │   ├── settings.py
-    │   ├── urls.py
-    │   └── wsgi.py
-    ├── manage.py
-    └── db.sqlite3
-.gitignore
-README.md
-
-Explanation:
-
-- main: Custom app containing endpoints, templates, and forms.
-- my_website: Default Django project folder with settings, URLs, and WSGI.
-- db.sqlite3: Local SQLite database (git-ignored).
 
 ---
 
