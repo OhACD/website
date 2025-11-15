@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from main.models import RegisterForm
+from main.forms import RegisterForm
 
 # Create your views here.
 def index(request):
