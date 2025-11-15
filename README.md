@@ -42,26 +42,27 @@ The project is intended to be expanded into an interactive portfolio showcasing 
 ## Project Structure
 
 website/
-├── my_website/
-│   ├── main/              # Main App
-│   │   ├── migrations/
-│   │   ├── templates/
-│   │   │   └── main/
-│   │   │       ├── layout.html
-│   │   │       ├── login.html
-│   │   │       ├── register.html
-│   │   │       └── users.html
-│   │   ├── models.py
-│   │   ├── views.py
-│   │   └── urls.py
-│   ├── my_website/        # Default Django app folder
-│   │   ├── settings.py
-│   │   ├── urls.py
-│   │   └── wsgi.py
-│   ├── manage.py
-│   └── db.sqlite3          # local SQLite database (git-ignored)
-├── .gitignore
-└── README.md
+└── my_website/
+    ├── main/
+    │   ├── migrations/
+    │   ├── templates/
+    │   │   └── main/
+    │   │       ├── layout.html
+    │   │       ├── login.html
+    │   │       ├── register.html
+    │   │       └── users.html
+    │   ├── models.py
+    │   ├── views.py
+    │   └── urls.py
+    ├── my_website/
+    │   ├── settings.py
+    │   ├── urls.py
+    │   └── wsgi.py
+    ├── manage.py
+    └── db.sqlite3
+.gitignore
+README.md
+requirements.txt
 
 - `main`: Custom app with endpoints, templates, and forms.
 - `my_website`: Default Django project folder (settings, URLs, WSGI).
@@ -73,14 +74,14 @@ website/
 
 1. Clone the repository
 
-   git clone <repository_url>
+   git clone https://github.com/OhACD/website
    cd website/my_website
 
 2. Create a virtual environment and activate it
 
    python -m venv .venv
    # Windows
-   .venv\Scripts\activate
+   .venv\Scripts\Activate.ps1
    # Linux/Mac
    source .venv/bin/activate
 
