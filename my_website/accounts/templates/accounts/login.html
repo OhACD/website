@@ -1,0 +1,12 @@
+{% extends "core/layout.html" %}
+    {% block title %}
+        Login
+    {% endblock %}
+    {% block body %}
+    <h1>Login</h1>
+    <form action="{% url 'accounts:login' %}" method="post">
+        {% csrf_token %}
+        <input type="email" name="email" placeholder="You@Provider.com" required autofocus>
+        <input type="button" value="login">
+    </form>
+    {% endblock %}

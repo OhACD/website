@@ -12,7 +12,7 @@ def index(request):
     return render(request, 'main/users.html')
 
 def login_view(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
@@ -20,11 +20,11 @@ def login_view(request):
             return HttpResponseRedirect(reverse('index'))
         else:
             new_form = AuthenticationForm(request)
-            return render(request, "main/login.html", {"form": new_form, "message": "Invalid Credentials"})
+            return render(request, 'main/login.html', {'form': new_form, 'message': 'Invalid Credentials'})
     else:
         form = AuthenticationForm()
 
-    return render(request, "main/login.html", {"form": form})
+    return render(request, 'main/login.html', {'form': form})
 
 def logout_view(request):
     logout(request)

@@ -1,0 +1,76 @@
+{% extends "core/layout.html" %}
+    {% block title %}
+        <h1>Welcome!</h1>
+    {% endblock %}
+    {% block body %}
+        <h1>Welcome!</h1>
+        <div>
+            <a href="{% url 'core:about' %}"><h2>About</h2></a>
+            <p>I'm Mohamed, a computer science student currently studing in the University
+                of El Neelain in Sudan, I have a passion for Building things and tackling problems.
+                some of my projects include this website, A RAG chatbot and much more.
+                You can check my projects
+                <a href="{% url 'core:projects' %}">here</a>.
+            </p>
+        </div>
+
+        <div>
+            <a href="{% url 'accounts:register' %}"><h2>Register</h2></a>
+            <p>
+                Register to Enter my mailing list and get updates about my Projects and offers, it's
+                quick and easy I promise.
+            </p>
+            <p>Note: By default new accounts aren't added to the mailing list unless they consent to it.</p>
+            <form action="{% url 'accounts:register' %}" method="post">
+                {% csrf_token %}
+                <input type="email" name="email" placeholder="You@provider.com">
+                <input type="text" name="name" placeholder="Name">
+                <input type="submit" value="Register">
+            </form>
+        </div>
+        <div>
+            <!--
+            TODO: div for login toggle between login and register using a button
+            -->
+            <a href="{% url 'accounts:login' %}"><h2>Login</h2></a>
+            <p>
+                Already have an account?  login using your Email adress.
+            </p>
+            <form action="{% url 'accounts:login' %}", method="post">
+                {% csrf_token %}
+                <input type="email" name="email" placeholder="You@provider.com">
+                <input type="submit" value="Login">
+            </form>
+        </div>
+        <!--
+        TODO: div should handle showcasing 2 or 3 nice comments from people who checked the website
+        -->
+        <div>
+            <ul>
+                <li>TODO: Nice comment #1</li>
+                <li>TODO: Nice comment #2</li>
+                <li>TODO: Nice comment #3</li>
+            </ul>
+        </div>
+        <!--
+        TODO: div should handle showcasing A couple selected projects from the projects route
+        -->
+        <div>
+            <a href="{% url 'core:projects' %}"><h2>Projects</h2></a>
+            <p>
+                Some of the projects i've worked on, if you like what you see be sure to leave a nice comment
+                and a rating, you can find more in the Projects Section.
+            </p>
+           <ul>
+                <li>TODO: project #1</li>
+                <li>TODO: project #2</li>
+                <li>TODO: project #3</li>
+            </ul>
+        </div>
+        <!--
+        TODO: div should handle the footer
+        -->
+        <div>
+            <h2>Footer</h2>
+        </div>
+    {% endblock %}
