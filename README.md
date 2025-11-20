@@ -1,40 +1,54 @@
 # Personal Website Project
 
-A Django-based personal website project aimed at building an advanced portfolio platform. Currently, the project focuses on backend development, with basic user authentication implemented.
+A Django-based personal website project aimed at showcasing backend development skills while building the foundation for a professional portfolio platform. The project currently focuses on backend functionality, with a basic frontend skeleton to support future interactive features.
 
 ---
 
 ## Table of Contents
 
-- Overview
-- Features
-- Installation
-- Usage
-- Future Development
-- License
+- [Overview](#overview)  
+- [Technology Stack](#technology-stack)  
+- [Features](#features)  
+- [Installation](#installation)  
+- [Usage](#usage)  
+- [Future Development](#future-development)  
+- [License](#license)  
 
 ---
 
 ## Overview
 
-This project is the foundation for a personal portfolio website. The backend currently supports:
+This Django project is a personal website designed to demonstrate backend engineering capabilities, while serving as a platform for a portfolio.  
 
-- User registration and login
-- Basic session-based authentication (login/logout)
-- Protected index page that checks whether a user is logged in
+Current backend functionality includes:
 
-The project is intended to be expanded into an interactive portfolio showcasing projects and personal achievements.
+- Passwordless user registration and login using **magic links** sent via email  
+- Email verification workflow to ensure valid accounts  
+- Mailing list opt-in system for newsletters and updates  
+- Custom User model storing extended information (email, name, verification status, consent)  
+- Basic frontend skeleton using HTML and Tailwind CSS for structure and forms  
+
+The project is intended to evolve into a fully interactive portfolio website with dynamic content and modern frontend enhancements.
+
+---
+
+## Technology Stack
+
+- Python 3.11  
+- Django 5.x  
+- SQLite (default; can be swapped with PostgreSQL or other DB)  
+- Tailwind CSS (frontend skeleton)  
 
 ---
 
 ## Features
 
-- User Authentication: Users can register, log in, and log out.
-- Protected Index Page: /main checks if a user is logged in.
-  - Logged-in users see users.html (confirmation they are authenticated).
-  - Unauthenticated users are redirected to the login page.
-- Basic Sessions: User authentication uses Django’s built-in sessions.
-- Backend-Focused: Currently focuses on backend; frontend enhancements are planned.
+- **User Authentication**: Register and log in using secure, signed email tokens (magic links)  
+- **Email Verification**: Users must verify their email before gaining full access  
+- **Mailing List Consent**: Optional opt-in during registration for newsletters  
+- **Custom User Model**: Stores email, name, verification status, and mailing list preference  
+- **Backend-Focused Architecture**: Demonstrates session management, token signing, and secure flows  
+- **Basic HTML Templates**: Provide structural placeholders for future interactive pages  
 
 ---
 
@@ -42,53 +56,66 @@ The project is intended to be expanded into an interactive portfolio showcasing 
 
 1. Clone the repository:
 
+```
 git clone https://github.com/OhACD/website
 cd website/my_website
+```
 
 2. Create a virtual environment and activate it:
 
+```
 python -m venv .venv
-# Windows
+# Windows (PowerShell)
 .venv\Scripts\Activate.ps1
-# Linux/Mac
+# Linux / Mac
 source .venv/bin/activate
+```
 
 3. Install dependencies:
 
+```
 pip install -r requirements.txt
+```
 
 4. Apply migrations:
 
+```
 python manage.py migrate
+```
 
 5. Run the development server:
 
+```
 python manage.py runserver
+```
 
-6. Access the site at: http://127.0.0.1:8000/main
+6. Access the site at: [http://127.0.0.1:8000/core](http://127.0.0.1:8000/core)
 
 ---
 
 ## Usage
 
-- Navigate to /main for the index page.
-- If unauthenticated, you will be redirected to /login.
-- Register new users at /register, which logs in users immediately.
-- Logout via /logout.
-
-Note: Full session management and advanced user session features are planned for future development.
+- Visit `/core` for the landing page with links to registration, login, and site sections.  
+- Registration allows users to opt-in to the mailing list.  
+- Users receive a verification email; clicking the link completes registration.  
+- Login uses a **magic link** sent to the registered email—no password required.  
+- Templates currently provide basic structure and forms; frontend enhancements will be added in future updates.  
+- Email testing can be done via Django console backend or a configured SMTP server.
 
 ---
 
 ## Future Development
 
-- Implement advanced session management (remember me, session expiration, etc.)
-- Build interactive portfolio pages with dynamic content
-- Add frontend enhancements using modern styling or React components
-- Include analytics and project tracking for portfolio items
+- Expand frontend with **Tailwind CSS or React** for interactive, polished UI  
+- Implement **comment and like system** for portfolio projects  
+- Add **user dashboards and profiles** for logged-in users  
+- Enhance session management (session expiration, "remember me")  
+- Integrate analytics for project interactions and views  
+- Implement real mailing list integration (Mailchimp, SendGrid, etc.)  
+- Add additional backend features for a fully dynamic portfolio experience  
 
 ---
 
 ## License
 
-This project is open-source and available under the MIT License.
+This project is open-source and available under the **MIT License**.
