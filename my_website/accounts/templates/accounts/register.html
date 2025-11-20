@@ -1,0 +1,13 @@
+{% extends "core/layout.html" %}
+    {% block title %}
+        Register
+    {% endblock %}
+    {% block body %}
+    <h1>Register</h1>
+    <form action="{% url 'accounts:register' %}" method="post">
+        {% csrf_token %}
+        <input type="email" name="email" placeholder="You@Provider.com" required autofocus>
+        <input type="text" name="name" placeholder="Name" required>
+        <button type="submit">Register</button>
+    </form>
+    {% endblock %}
