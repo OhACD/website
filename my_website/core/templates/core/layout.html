@@ -32,25 +32,76 @@
       }
 
       .bg-image {
-        background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+        overflow: hidden;
         will-change: transform;
+      }
+
+      .bg-image video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(35%) saturate(65%) hue-rotate(-8deg) brightness(0.9);
       }
 
       .bg-overlay {
         background: linear-gradient(
           135deg,
-          rgba(15, 15, 18, 0.85) 0%,
-          rgba(26, 26, 31, 0.80) 50%,
-          rgba(15, 15, 18, 0.85) 100%
+          rgba(10, 15, 20, 0.70) 0%,
+          rgba(23, 33, 44, 0.60) 45%,
+          rgba(12, 18, 26, 0.70) 100%
         );
       }
 
       .glass-effect {
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
+      }
+
+      .menu-anchor {
+        position: absolute;
+        top: 0.75rem;
+        right: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.35rem;
+        z-index: 10;
+      }
+
+      .menu-trigger {
+        min-width: 90px;
+        height: 46px;
+        border-radius: 9999px;
+        border: 1.5px solid rgba(153, 246, 228, 0.4);
+        background: rgba(8, 12, 17, 0.92);
+        color: rgba(226, 232, 240, 0.9);
+        font-size: 0.62rem;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        padding: 0 1.35rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        box-shadow: 0 20px 35px rgba(5, 7, 11, 0.4);
+      }
+
+      .menu-trigger:hover {
+        transform: translateY(-1px);
+        border-color: rgba(153, 246, 228, 0.8);
+        background: rgba(8, 14, 20, 0.95);
+        box-shadow: 0 25px 45px rgba(5, 7, 11, 0.5);
+      }
+
+      .menu-trigger__icon {
+        width: 6px;
+        height: 6px;
+        border-radius: 9999px;
+        background: rgba(153, 246, 228, 0.9);
+        box-shadow: 0 0 8px rgba(153, 246, 228, 0.65);
       }
 
       .glow-on-hover {
@@ -83,7 +134,9 @@
         pointer-events: none;
       }
 
-      .dropdown-group:hover .dropdown-menu {
+      .dropdown-group:hover .dropdown-menu,
+      .dropdown-group:focus-within .dropdown-menu,
+      .dropdown-group.is-open .dropdown-menu {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
@@ -185,6 +238,20 @@
         transition: all 0.2s ease;
       }
 
+      @media (max-width: 768px) {
+        .menu-anchor {
+          position: static;
+          align-items: flex-end;
+          margin-bottom: 1rem;
+        }
+
+        .menu-trigger {
+          min-width: 72px;
+          height: 44px;
+          letter-spacing: 0.25em;
+        }
+      }
+
     </style>
     <script>
       // Add loading states to forms
@@ -211,105 +278,120 @@
           });
         });
 
-        // Close dropdown on outside click
-        document.addEventListener('click', function(e) {
-          const dropdowns = document.querySelectorAll('.dropdown-group');
-          dropdowns.forEach(dropdown => {
-            if (!dropdown.contains(e.target)) {
-              const menu = dropdown.querySelector('.dropdown-menu');
-              if (menu) {
-                menu.style.opacity = '0';
-                menu.style.visibility = 'hidden';
-                menu.style.transform = 'translateY(-10px)';
-                menu.style.pointerEvents = 'none';
+        const dropdownGroups = Array.from(document.querySelectorAll('.dropdown-group'));
+
+        const setDropdownState = (dropdown, isOpen) => {
+          const button = dropdown.querySelector('button[aria-haspopup="true"]');
+          if (!button) return;
+          if (isOpen) {
+            dropdown.classList.add('is-open');
+            button.setAttribute('aria-expanded', 'true');
+          } else {
+            dropdown.classList.remove('is-open');
+            button.setAttribute('aria-expanded', 'false');
+          }
+        };
+
+        dropdownGroups.forEach(dropdown => {
+          const button = dropdown.querySelector('button[aria-haspopup="true"]');
+          const menu = dropdown.querySelector('.dropdown-menu');
+          if (!button || !menu) return;
+
+          button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const isOpen = dropdown.classList.contains('is-open');
+            dropdownGroups.forEach(group => {
+              if (group !== dropdown) {
+                setDropdownState(group, false);
               }
+            });
+            setDropdownState(dropdown, !isOpen);
+          });
+
+          button.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              button.click();
+            }
+            if (e.key === 'Escape') {
+              setDropdownState(dropdown, false);
+            }
+          });
+
+          menu.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+              setDropdownState(dropdown, false);
+              button.focus();
             }
           });
         });
 
-        // Keyboard navigation for dropdown
-        const dropdownButtons = document.querySelectorAll('.dropdown-group button');
-        dropdownButtons.forEach(btn => {
-          btn.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              const menu = this.parentElement.querySelector('.dropdown-menu');
-              if (menu) {
-                const isVisible = menu.style.opacity === '1' || getComputedStyle(menu).opacity === '1';
-                menu.style.opacity = isVisible ? '0' : '1';
-                menu.style.visibility = isVisible ? 'hidden' : 'visible';
-                menu.style.transform = isVisible ? 'translateY(-10px)' : 'translateY(0)';
-                menu.style.pointerEvents = isVisible ? 'none' : 'auto';
-              }
-            }
-            if (e.key === 'Escape') {
-              const menu = this.parentElement.querySelector('.dropdown-menu');
-              if (menu) {
-                menu.style.opacity = '0';
-                menu.style.visibility = 'hidden';
-                menu.style.transform = 'translateY(-10px)';
-                menu.style.pointerEvents = 'none';
-              }
+        document.addEventListener('click', function(e) {
+          dropdownGroups.forEach(dropdown => {
+            if (!dropdown.contains(e.target)) {
+              setDropdownState(dropdown, false);
             }
           });
         });
+
       });
     </script>
   </head>
   <body class="min-h-screen text-brand-text antialiased relative overflow-x-hidden">
-    <!-- Background Image Layer -->
-    <div class="fixed inset-0 bg-image z-0" style="opacity: 0.5;"></div>
+    <!-- Background Video Layer -->
+    <div class="fixed inset-0 bg-image z-0" style="opacity: 0.55;">
+      <video autoplay muted loop playsinline preload="auto" poster="">
+        <source src="https://cdn.pixabay.com/video/2025/11/05/314142_small.mp4?download" type="video/mp4" />
+      </video>
+    </div>
 
     <!-- Overlay Layer -->
     <div class="fixed inset-0 bg-overlay z-0"></div>
 
     <!-- Content Layer -->
     <div class="relative flex min-h-screen flex-col z-10">
-      <header class="sticky top-0 z-20 transition-colors duration-200">
-        <div class="mx-auto max-w-2xl relative">
-          <div class="flex items-center justify-between px-6 py-3">
-            <a href="{% url 'core:landing' %}" class="text-lg font-semibold tracking-wide text-brand-accentMint transition-colors duration-200 hover:text-brand-accentSky cursor-pointer whitespace-nowrap">
-              MOHAMED
-            </a>
-            <div class="flex items-center gap-4">
+      <main class="flex flex-1 items-start">
+        <div class="mx-auto w-full max-w-5xl px-6 pt-16 pb-12">
+          <div class="relative flex-1">
             {% if user.is_authenticated %}
-            <div class="relative dropdown-group" style="margin-right: -1.5rem;">
-              <button type="button" aria-label="User menu" aria-expanded="false" aria-haspopup="true" class="flex items-center justify-center w-11 h-11 rounded-full border-2 border-brand-accentMint/70 bg-brand-baseAlt/90 text-brand-accentMint font-bold hover:border-brand-accentMint hover:bg-brand-baseAlt transition-all duration-200 shadow-lg shadow-brand-accentMint/20 focus:outline-none focus:ring-2 focus:ring-brand-accentMint/50">
-                <span class="text-base font-bold">{{ user.name|first|upper }}</span>
+            <div class="menu-anchor dropdown-group">
+              <button type="button" aria-label="Open member menu" aria-expanded="false" aria-haspopup="true" class="menu-trigger">
+                <span>Menu</span>
+                <span class="menu-trigger__icon"></span>
               </button>
-              <div class="dropdown-menu absolute right-0 mt-4 rounded-xl border border-brand-baseMuted/60 bg-brand-baseAlt/95 backdrop-blur-md shadow-xl z-50" style="width: 180px;" role="menu" aria-orientation="vertical">
+              <div class="dropdown-menu absolute right-0 mt-4 rounded-2xl border border-brand-baseMuted/50 bg-brand-baseAlt/95 backdrop-blur-md shadow-2xl z-50 w-56" role="menu" aria-orientation="vertical">
                 <div class="py-1">
-                  <div class="px-4 py-2.5 text-sm border-b border-brand-baseMuted/40" role="none">
-                    <p class="font-semibold text-brand-text truncate" aria-label="User name">{{ user.name }}</p>
+                  <div class="px-5 py-3 text-sm border-b border-brand-baseMuted/30" role="none">
+                    <p class="font-semibold text-brand-text text-base truncate" aria-label="User name">{{ user.name }}</p>
                     <p class="text-xs mt-1 text-brand-textMuted truncate" title="{{ user.email }}" aria-label="User email">{{ user.email }}</p>
                   </div>
-                  <a href="{% url 'accounts:logout' %}" role="menuitem" class="block px-4 py-2.5 text-sm text-brand-text hover:bg-brand-base/60 transition-colors duration-200 focus:bg-brand-base/60 focus:outline-none">
+                  <a href="{% url 'accounts:logout' %}" role="menuitem" class="block px-5 py-3 text-sm font-medium text-brand-text hover:bg-brand-base/60 transition-colors duration-200 focus:bg-brand-base/60 focus:outline-none rounded-b-2xl">
                     Logout
                   </a>
                 </div>
               </div>
             </div>
-            {% else %}
-            {% block layout_actions %}{% endblock %}
             {% endif %}
+            {% if not user.is_authenticated %}
+            <div class="flex justify-end mb-6">
+              <div class="flex flex-wrap items-center gap-3">
+                {% block layout_actions %}{% endblock %}
+              </div>
             </div>
-          </div>
-        </div>
-      </header>
-
-      <main class="flex flex-1 items-start">
-        <div class="mx-auto w-full max-w-5xl px-6 py-10">
-          {% if messages %}
-            <div class="mb-6 space-y-2 animate-fade-in">
-              {% for message in messages %}
-                <div class="message-animate rounded-xl border p-4 shadow-lg backdrop-blur-sm {% if message.tags == 'error' %}border-red-500/50 bg-red-500/10 text-red-400{% elif message.tags == 'warning' %}border-yellow-500/50 bg-yellow-500/10 text-yellow-400{% elif message.tags == 'success' %}border-green-500/50 bg-green-500/10 text-green-400{% else %}border-brand-baseMuted/50 bg-brand-baseAlt/60 text-brand-text{% endif %}">
-                  {{ message }}
-                </div>
-              {% endfor %}
+            {% endif %}
+            {% if messages %}
+              <div class="mb-6 space-y-2 animate-fade-in">
+                {% for message in messages %}
+                  <div class="message-animate rounded-xl border p-4 shadow-lg backdrop-blur-sm {% if message.tags == 'error' %}border-red-500/50 bg-red-500/10 text-red-400{% elif message.tags == 'warning' %}border-yellow-500/50 bg-yellow-500/10 text-yellow-400{% elif message.tags == 'success' %}border-green-500/50 bg-green-500/10 text-green-400{% else %}border-brand-baseMuted/50 bg-brand-baseAlt/60 text-brand-text{% endif %}">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+            <div class="animate-fade-in rounded-xl border border-brand-baseMuted/60 bg-brand-baseAlt/80 p-8 shadow-2xl shadow-black/30 transition-colors duration-200">
+              {% block body %}{% endblock %}
             </div>
-          {% endif %}
-          <div class="animate-fade-in rounded-xl border border-brand-baseMuted/60 bg-brand-baseAlt/80 p-8 shadow-2xl shadow-black/30 transition-colors duration-200">
-            {% block body %}{% endblock %}
           </div>
         </div>
       </main>
