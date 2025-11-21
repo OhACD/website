@@ -1,6 +1,6 @@
 # Personal Website Project
 
-A Django-based personal website project aimed at showcasing backend development skills while building the foundation for a professional portfolio platform. The project currently focuses on backend functionality, with a basic frontend skeleton to support future interactive features.
+A Django-based personal portfolio platform focused on a passwordless ("magic link") authentication experience, plus a small collection of informational pages.
 
 ---
 
@@ -18,37 +18,17 @@ A Django-based personal website project aimed at showcasing backend development 
 
 ## Overview
 
-This Django project is a personal website designed to demonstrate backend engineering capabilities, while serving as a platform for a portfolio.  
-
-Current backend functionality includes:
-
-- Passwordless user registration and login using **magic links** sent via email  
-- Email verification workflow to ensure valid accounts  
-- Mailing list opt-in system for newsletters and updates  
-- Custom User model storing extended information (email, name, verification status, consent)  
-- Basic frontend skeleton using HTML and Tailwind CSS for structure and forms  
-
-The project is intended to evolve into a fully interactive portfolio website with dynamic content and modern frontend enhancements.
-
----
-
-## Technology Stack
-
-- Python 3.11  
-- Django 5.x  
-- SQLite (default; can be swapped with PostgreSQL or other DB)  
-- Tailwind CSS (frontend skeleton)  
+This repository powers a personal portfolio site built with Django. The `core` app owns public-facing pages, while the `accounts` app implements a passwordless login flow. Users register with an email address, receive verification links, and later sign in via one-time "magic" links.
 
 ---
 
 ## Features
 
-- **User Authentication**: Register and log in using secure, signed email tokens (magic links)  
-- **Email Verification**: Users must verify their email before gaining full access  
-- **Mailing List Consent**: Optional opt-in during registration for newsletters  
-- **Custom User Model**: Stores email, name, verification status, and mailing list preference  
-- **Backend-Focused Architecture**: Demonstrates session management, token signing, and secure flows  
-- **Basic HTML Templates**: Provide structural placeholders for future interactive pages  
+- Passwordless auth: email-based verification and login links that expire after first use.
+- Rate limiting: built-in throttling on login and registration email requests to prevent abuse.
+- Async mail dispatch: magic-link emails send in the background so requests stay fast.
+- Custom user model: `accounts.User` uses email as the identifier.
+- Core marketing pages: static landing/about/projects pages under the `core` app.
 
 ---
 
@@ -73,46 +53,52 @@ source .venv/bin/activate
 
 3. Install dependencies:
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
 4. Apply migrations:
 
-```
+```bash
 python manage.py migrate
 ```
 
-5. Run the development server:
+5. Create a `.env` file (or otherwise supply environment variables):
 
 ```
+DJANGO_SECRET_KEY=change-me
+DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+DJANGO_DEBUG=True
+EMAIL_HOST_USER=you@example.com
+EMAIL_HOST_PASSWORD=app-specific-password
+```
+
+6. Run the development server:
+
+```bash
 python manage.py runserver
 ```
 
-6. Access the site at: [http://127.0.0.1:8000/core](http://127.0.0.1:8000/core)
+7. Access the site at http://127.0.0.1:8000/core/ (core app) or http://127.0.0.1:8000/accounts/ (auth flows).
 
 ---
 
 ## Usage
 
-- Visit `/core` for the landing page with links to registration, login, and site sections.  
-- Registration allows users to opt-in to the mailing list.  
-- Users receive a verification email; clicking the link completes registration.  
-- Login uses a **magic link** sent to the registered email—no password required.  
-- Templates currently provide basic structure and forms; frontend enhancements will be added in future updates.  
-- Email testing can be done via Django console backend or a configured SMTP server.
+- Register: POST `/accounts/register/` with an email/name to receive a verification link.
+- Verify: click the emailed `/accounts/verify/?token=...` link to activate the account.
+- Login: POST `/accounts/login/` to receive a single-use login link.
+- Landing pages live under `/core/` and are safe for non-authenticated traffic.
+
+Rate limits currently allow **3 registration attempts/hour** and **5 login-link requests/15 minutes** per email address.
 
 ---
 
 ## Future Development
 
-- Expand frontend with **Tailwind CSS or React** for interactive, polished UI  
-- Implement **comment and like system** for portfolio projects  
-- Add **user dashboards and profiles** for logged-in users  
-- Enhance session management (session expiration, "remember me")  
-- Integrate analytics for project interactions and views  
-- Implement real mailing list integration (Mailchimp, SendGrid, etc.)  
-- Add additional backend features for a fully dynamic portfolio experience  
+- Improve user feedback and UI polish for auth flows.
+- Expand portfolio content with dynamic project data.
+- Integrate background task queue for email delivery if traffic grows.
 
 ---
 
