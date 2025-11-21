@@ -1,0 +1,51 @@
+{% extends "core/layout.html" %}
+
+{% block title %}Projects{% endblock %}
+
+{% block body %}
+<div class="space-y-8">
+  <header class="rounded-2xl border border-brand-baseMuted/40 bg-brand-base/70 p-10">
+    <p class="text-sm uppercase tracking-[0.35em] text-brand-textMuted/70">Projects</p>
+    <h1 class="mt-3 text-4xl font-semibold text-brand-text">Shipping thoughtful builds</h1>
+    <p class="mt-4 text-lg text-brand-textMuted">
+      A rotating set of studio experiments, freelance work, and personal tools.
+    </p>
+  </header>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    {% for project in "123" %}
+    <article class="rounded-2xl border border-brand-baseMuted/40 bg-brand-baseAlt/70 p-6 transition-colors duration-200 hover:border-brand-accentSky/50">
+      <div class="aspect-video w-full rounded-lg bg-brand-base/50 mb-4 overflow-hidden border border-brand-baseMuted/40">
+        <div class="w-full h-full flex items-center justify-center text-brand-textMuted/50">
+          <p class="text-sm">Project Screenshot</p>
+        </div>
+      </div>
+      <p class="text-xs uppercase tracking-[0.3em] text-brand-textMuted/70">GitHub Project</p>
+      <h2 class="mt-3 text-2xl font-semibold text-brand-text">Project Title</h2>
+      <p class="mt-2 text-sm text-brand-textMuted">
+        Project description will go here. This is a placeholder for showcasing projects from GitHub with screenshots and links.
+      </p>
+      <div class="mt-4 flex flex-wrap items-center gap-2">
+        <div class="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-brand-accentSky">
+          <span class="rounded-full bg-brand-base px-3 py-1">Python</span>
+          <span class="rounded-full bg-brand-base px-3 py-1">Django</span>
+        </div>
+        <a href="https://github.com/OhACD" target="_blank" rel="noopener noreferrer"
+           class="ml-auto text-sm font-medium text-brand-accentMint transition-colors duration-200 hover:text-brand-accentSky focus:outline-none focus:ring-2 focus:ring-brand-accentMint/50 rounded">
+          View on GitHub →
+        </a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  <section class="rounded-2xl border border-brand-baseMuted/40 bg-brand-baseAlt/60 p-8">
+    <h2 class="text-2xl font-semibold text-brand-text">Want details?</h2>
+    <p class="mt-3 text-brand-textMuted">Reach out for private demos, repos, or access to staging environments.</p>
+    <a href="mailto:imadeldeen007@gmail.com"
+       class="mt-5 inline-flex items-center rounded-full bg-brand-accentMint px-6 py-3 font-semibold text-brand-base transition hover:bg-brand-accentMint/80 focus:outline-none focus:ring-2 focus:ring-brand-accentMint/50">
+      Email me
+    </a>
+  </section>
+</div>
+{% endblock %}

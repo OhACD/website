@@ -1,0 +1,28 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "A Django-based personal website project aimed at building an advanced portfolio platform. Currently, the project focuses on backend development, with basic user authentication implemented.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tw:build": "tailwindcss -i ./assets/css/input.css -o ./static/css/output.css -m",
+    "tw:watch": "tailwindcss -i ./assets/css/input.css -o ./static/css/output.css -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OhACD/website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/OhACD/website/issues"
+  },
+  "homepage": "https://github.com/OhACD/website#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.13"
+  }
+}
