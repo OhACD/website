@@ -213,7 +213,15 @@ def login_request(request):
         logger.error(f"Failed to send login email: {e}")
         messages.error(request, "We couldn't send the login email. Please try again later.")
 
-    return redirect("accounts:login")
+    # Re-render the login page (200) to avoid redirect loops during rapid requests/tests
+    return render(
+        request,
+        "accounts/login.html",
+        {
+            "submitted_email": email,
+        },
+        status=200,
+    )
 
 def verify_email(request):
     """
