@@ -178,6 +178,11 @@ def login_request(request):
     # POST
     email = request.POST.get("email", "").strip()
 
+    # Check if user is already logged in
+    if request.user.is_authenticated:
+        messages.info(request, "You are already logged in.")
+        return redirect("core:landing")
+
     # Validate email format
     is_valid, error_msg = _validate_email(email)
     if not is_valid:
@@ -208,7 +213,15 @@ def login_request(request):
         logger.error(f"Failed to send login email: {e}")
         messages.error(request, "We couldn't send the login email. Please try again later.")
 
-    return redirect("accounts:login")
+    # Re-render the login page (200) to avoid redirect loops during rapid requests/tests
+    return render(
+        request,
+        "accounts/login.html",
+        {
+            "submitted_email": email,
+        },
+        status=200,
+    )
 
 def verify_email(request):
     """
