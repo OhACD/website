@@ -6,12 +6,13 @@ A Django-based personal portfolio platform focused on a passwordless ("magic lin
 
 ## Table of Contents
 
-- Overview
-- Features
-- Installation
-- Usage
-- Future Development
-- License
+- [Overview](#overview)  
+- [Technology Stack](#technology-stack)  
+- [Features](#features)  
+- [Installation](#installation)  
+- [Usage](#usage)  
+- [Future Development](#future-development)  
+- [License](#license)  
 
 ---
 
@@ -35,16 +36,20 @@ This repository powers a personal portfolio site built with Django. The `core` a
 
 1. Clone the repository:
 
+```
 git clone https://github.com/OhACD/website
 cd website/my_website
+```
 
 2. Create a virtual environment and activate it:
 
+```
 python -m venv .venv
-# Windows
+# Windows (PowerShell)
 .venv\Scripts\Activate.ps1
-# Linux/Mac
+# Linux / Mac
 source .venv/bin/activate
+```
 
 3. Install dependencies:
 
@@ -99,4 +104,4 @@ Rate limits currently allow **3 registration attempts/hour** and **5 login-link 
 
 ## License
 
-This project is open-source and available under the MIT License.
+This project is open-source and available under the **MIT License**.
