@@ -1,6 +1,6 @@
 # Personal Website Project
 
-A Django-based personal website project aimed at building an advanced portfolio platform. Currently, the project focuses on backend development, with basic user authentication implemented.
+A Django-based personal portfolio platform focused on a passwordless ("magic link") authentication experience, plus a small collection of informational pages.
 
 ---
 
@@ -17,24 +17,17 @@ A Django-based personal website project aimed at building an advanced portfolio 
 
 ## Overview
 
-This project is the foundation for a personal portfolio website. The backend currently supports:
-
-- User registration and login
-- Basic session-based authentication (login/logout)
-- Protected index page that checks whether a user is logged in
-
-The project is intended to be expanded into an interactive portfolio showcasing projects and personal achievements.
+This repository powers a personal portfolio site built with Django. The `core` app owns public-facing pages, while the `accounts` app implements a passwordless login flow. Users register with an email address, receive verification links, and later sign in via one-time "magic" links.
 
 ---
 
 ## Features
 
-- User Authentication: Users can register, log in, and log out.
-- Protected Index Page: /main checks if a user is logged in.
-  - Logged-in users see users.html (confirmation they are authenticated).
-  - Unauthenticated users are redirected to the login page.
-- Basic Sessions: User authentication uses Django’s built-in sessions.
-- Backend-Focused: Currently focuses on backend; frontend enhancements are planned.
+- Passwordless auth: email-based verification and login links that expire after first use.
+- Rate limiting: built-in throttling on login and registration email requests to prevent abuse.
+- Async mail dispatch: magic-link emails send in the background so requests stay fast.
+- Custom user model: `accounts.User` uses email as the identifier.
+- Core marketing pages: static landing/about/projects pages under the `core` app.
 
 ---
 
@@ -55,37 +48,52 @@ source .venv/bin/activate
 
 3. Install dependencies:
 
+```bash
 pip install -r requirements.txt
+```
 
 4. Apply migrations:
 
+```bash
 python manage.py migrate
+```
 
-5. Run the development server:
+5. Create a `.env` file (or otherwise supply environment variables):
 
+```
+DJANGO_SECRET_KEY=change-me
+DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+DJANGO_DEBUG=True
+EMAIL_HOST_USER=you@example.com
+EMAIL_HOST_PASSWORD=app-specific-password
+```
+
+6. Run the development server:
+
+```bash
 python manage.py runserver
+```
 
-6. Access the site at: http://127.0.0.1:8000/main
+7. Access the site at http://127.0.0.1:8000/core/ (core app) or http://127.0.0.1:8000/accounts/ (auth flows).
 
 ---
 
 ## Usage
 
-- Navigate to /main for the index page.
-- If unauthenticated, you will be redirected to /login.
-- Register new users at /register, which logs in users immediately.
-- Logout via /logout.
+- Register: POST `/accounts/register/` with an email/name to receive a verification link.
+- Verify: click the emailed `/accounts/verify/?token=...` link to activate the account.
+- Login: POST `/accounts/login/` to receive a single-use login link.
+- Landing pages live under `/core/` and are safe for non-authenticated traffic.
 
-Note: Full session management and advanced user session features are planned for future development.
+Rate limits currently allow **3 registration attempts/hour** and **5 login-link requests/15 minutes** per email address.
 
 ---
 
 ## Future Development
 
-- Implement advanced session management (remember me, session expiration, etc.)
-- Build interactive portfolio pages with dynamic content
-- Add frontend enhancements using modern styling or React components
-- Include analytics and project tracking for portfolio items
+- Improve user feedback and UI polish for auth flows.
+- Expand portfolio content with dynamic project data.
+- Integrate background task queue for email delivery if traffic grows.
 
 ---
 
