@@ -1,10 +1,406 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>{% block title %} {% endblock %}</title>
-    </head>
-    <body>
-        {% block body %}
-        {% endblock %}
-    </body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Mohamed's personal portfolio - Computer science student and full-stack developer building diverse projects from RAG chatbots to Minecraft mods." />
+    <meta name="keywords" content="portfolio, web development, Django, Python, AI, RAG chatbots, Minecraft mods" />
+    <meta name="author" content="Mohamed" />
+    <title>{% block title %}Mohamed - Portfolio{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}" />
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+
+      .animate-fade-in {
+        animation: fadeIn 0.4s ease-out;
+        will-change: opacity, transform;
+      }
+
+      .animate-fade-in.animation-complete {
+        will-change: auto;
+      }
+
+      .bg-image {
+        overflow: hidden;
+        will-change: transform;
+      }
+
+      .bg-image video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(35%) saturate(65%) hue-rotate(-8deg) brightness(0.9);
+      }
+
+      .bg-overlay {
+        background: linear-gradient(
+          135deg,
+          rgba(10, 15, 20, 0.70) 0%,
+          rgba(23, 33, 44, 0.60) 45%,
+          rgba(12, 18, 26, 0.70) 100%
+        );
+      }
+
+      .glass-effect {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .menu-anchor {
+        position: absolute;
+        top: 0.75rem;
+        right: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.35rem;
+        z-index: 10;
+      }
+
+      .menu-trigger {
+        min-width: 90px;
+        height: 46px;
+        border-radius: 9999px;
+        border: 1.5px solid rgba(153, 246, 228, 0.4);
+        background: rgba(8, 12, 17, 0.92);
+        color: rgba(226, 232, 240, 0.9);
+        font-size: 0.62rem;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        padding: 0 1.35rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        box-shadow: 0 20px 35px rgba(5, 7, 11, 0.4);
+      }
+
+      .menu-trigger:hover {
+        transform: translateY(-1px);
+        border-color: rgba(153, 246, 228, 0.8);
+        background: rgba(8, 14, 20, 0.95);
+        box-shadow: 0 25px 45px rgba(5, 7, 11, 0.5);
+      }
+
+      .menu-trigger__icon {
+        width: 6px;
+        height: 6px;
+        border-radius: 9999px;
+        background: rgba(153, 246, 228, 0.9);
+        box-shadow: 0 0 8px rgba(153, 246, 228, 0.65);
+      }
+
+      .glow-on-hover {
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+        will-change: box-shadow, transform;
+      }
+
+      .glow-on-hover:hover {
+        box-shadow: 0 0 15px rgba(153, 246, 228, 0.25);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      .message-animate {
+        animation: fadeIn 0.3s ease-out;
+        will-change: opacity, transform;
+      }
+
+      .dropdown-menu {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+        pointer-events: none;
+      }
+
+      .dropdown-group:hover .dropdown-menu,
+      .dropdown-group:focus-within .dropdown-menu,
+      .dropdown-group.is-open .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      /* Loading spinner */
+      .spinner {
+        border: 2px solid rgba(153, 246, 228, 0.2);
+        border-top-color: rgba(153, 246, 228, 1);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 0.6s linear infinite;
+      }
+
+      @keyframes spin {
+        from { transform: translate(-50%, -50%) rotate(0deg); }
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+
+      /* Smooth scroll */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Focus visible improvements */
+      *:focus-visible {
+        outline: 2px solid rgba(153, 246, 228, 0.6);
+        outline-offset: 2px;
+      }
+
+      /* Button loading state */
+      .btn-loading {
+        position: relative;
+        pointer-events: none;
+        cursor: not-allowed;
+      }
+
+      .btn-loading > * {
+        opacity: 0;
+        transition: opacity 0.15s ease-out;
+      }
+
+      .btn-loading::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: inherit;
+        background: inherit;
+        opacity: 0.95;
+      }
+
+      .btn-loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 18px;
+        height: 18px;
+        margin-top: -9px;
+        margin-left: -9px;
+        border: 2.5px solid transparent;
+        border-top-color: currentColor;
+        border-right-color: currentColor;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        z-index: 10;
+      }
+
+      /* Spinner colors for different button types */
+      .btn-loading.bg-brand-accentMint::after {
+        border-top-color: rgba(15, 15, 18, 0.8);
+        border-right-color: rgba(15, 15, 18, 0.3);
+      }
+
+      .btn-loading.bg-brand-accentLavender::after {
+        border-top-color: rgba(15, 15, 18, 0.8);
+        border-right-color: rgba(15, 15, 18, 0.3);
+      }
+
+      .btn-loading.bg-brand-base::after,
+      .btn-loading.bg-brand-baseAlt::after {
+        border-top-color: rgba(153, 246, 228, 0.9);
+        border-right-color: rgba(153, 246, 228, 0.3);
+      }
+
+      /* For buttons with border (outline style) */
+      .btn-loading.border-brand-accentMint::after {
+        border-top-color: rgba(153, 246, 228, 0.9);
+        border-right-color: rgba(153, 246, 228, 0.3);
+      }
+
+      /* Form input focus ring */
+      input:focus, textarea:focus, select:focus {
+        transition: all 0.2s ease;
+      }
+
+      @media (max-width: 768px) {
+        .menu-anchor {
+          position: static;
+          align-items: flex-end;
+          margin-bottom: 1rem;
+        }
+
+        .menu-trigger {
+          min-width: 72px;
+          height: 44px;
+          letter-spacing: 0.25em;
+        }
+      }
+
+    </style>
+    <script>
+      // Add loading states to forms
+      document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+          form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn && !submitBtn.disabled) {
+              // Small delay to ensure smooth transition
+              requestAnimationFrame(function() {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('btn-loading');
+              });
+
+              // Fallback: re-enable after 10 seconds in case of error
+              setTimeout(function() {
+                if (submitBtn && submitBtn.disabled) {
+                  submitBtn.disabled = false;
+                  submitBtn.classList.remove('btn-loading');
+                }
+              }, 10000);
+            }
+          });
+        });
+
+        const dropdownGroups = Array.from(document.querySelectorAll('.dropdown-group'));
+
+        const setDropdownState = (dropdown, isOpen) => {
+          const button = dropdown.querySelector('button[aria-haspopup="true"]');
+          if (!button) return;
+          if (isOpen) {
+            dropdown.classList.add('is-open');
+            button.setAttribute('aria-expanded', 'true');
+          } else {
+            dropdown.classList.remove('is-open');
+            button.setAttribute('aria-expanded', 'false');
+          }
+        };
+
+        dropdownGroups.forEach(dropdown => {
+          const button = dropdown.querySelector('button[aria-haspopup="true"]');
+          const menu = dropdown.querySelector('.dropdown-menu');
+          if (!button || !menu) return;
+
+          button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const isOpen = dropdown.classList.contains('is-open');
+            dropdownGroups.forEach(group => {
+              if (group !== dropdown) {
+                setDropdownState(group, false);
+              }
+            });
+            setDropdownState(dropdown, !isOpen);
+          });
+
+          button.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              button.click();
+            }
+            if (e.key === 'Escape') {
+              setDropdownState(dropdown, false);
+            }
+          });
+
+          menu.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+              setDropdownState(dropdown, false);
+              button.focus();
+            }
+          });
+        });
+
+        document.addEventListener('click', function(e) {
+          dropdownGroups.forEach(dropdown => {
+            if (!dropdown.contains(e.target)) {
+              setDropdownState(dropdown, false);
+            }
+          });
+        });
+
+      });
+    </script>
+  </head>
+  <body class="min-h-screen text-brand-text antialiased relative overflow-x-hidden">
+    <!-- Background Video Layer -->
+    <div class="fixed inset-0 bg-image z-0" style="opacity: 0.55;">
+      <video autoplay muted loop playsinline preload="auto" poster="">
+        <source src="https://cdn.pixabay.com/video/2025/11/05/314142_small.mp4?download" type="video/mp4" />
+      </video>
+    </div>
+
+    <!-- Overlay Layer -->
+    <div class="fixed inset-0 bg-overlay z-0"></div>
+
+    <!-- Content Layer -->
+    <div class="relative flex min-h-screen flex-col z-10">
+      <main class="flex flex-1 items-start">
+        <div class="mx-auto w-full max-w-5xl px-6 pt-16 pb-12">
+          <div class="relative flex-1">
+            {% if user.is_authenticated %}
+            <div class="menu-anchor dropdown-group">
+              <button type="button" aria-label="Open member menu" aria-expanded="false" aria-haspopup="true" class="menu-trigger">
+                <span>Menu</span>
+                <span class="menu-trigger__icon"></span>
+              </button>
+              <div class="dropdown-menu absolute right-0 mt-4 rounded-2xl border border-brand-baseMuted/50 bg-brand-baseAlt/95 backdrop-blur-md shadow-2xl z-50 w-56" role="menu" aria-orientation="vertical">
+                <div class="py-1">
+                  <div class="px-5 py-3 text-sm border-b border-brand-baseMuted/30" role="none">
+                    <p class="font-semibold text-brand-text text-base truncate" aria-label="User name">{{ user.name }}</p>
+                    <p class="text-xs mt-1 text-brand-textMuted truncate" title="{{ user.email }}" aria-label="User email">{{ user.email }}</p>
+                  </div>
+                  <a href="{% url 'accounts:logout' %}" role="menuitem" class="block px-5 py-3 text-sm font-medium text-brand-text hover:bg-brand-base/60 transition-colors duration-200 focus:bg-brand-base/60 focus:outline-none rounded-b-2xl">
+                    Logout
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% if not user.is_authenticated %}
+            <div class="flex justify-end mb-6">
+              <div class="flex flex-wrap items-center gap-3">
+                {% block layout_actions %}{% endblock %}
+              </div>
+            </div>
+            {% endif %}
+            {% if messages %}
+              <div class="mb-6 space-y-2 animate-fade-in">
+                {% for message in messages %}
+                  <div class="message-animate rounded-xl border p-4 shadow-lg backdrop-blur-sm {% if message.tags == 'error' %}border-red-500/50 bg-red-500/10 text-red-400{% elif message.tags == 'warning' %}border-yellow-500/50 bg-yellow-500/10 text-yellow-400{% elif message.tags == 'success' %}border-green-500/50 bg-green-500/10 text-green-400{% else %}border-brand-baseMuted/50 bg-brand-baseAlt/60 text-brand-text{% endif %}">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+            <div class="animate-fade-in rounded-xl border border-brand-baseMuted/60 bg-brand-baseAlt/80 p-8 shadow-2xl shadow-black/30 transition-colors duration-200">
+              {% block body %}{% endblock %}
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="border-t border-brand-baseMuted/70 bg-brand-base/80 transition-colors duration-200">
+        <div class="mx-auto max-w-5xl px-6 py-4 text-sm text-brand-textMuted">
+          {% block footer %}&copy; {% now "Y" %} Mohamed{% endblock %}
+        </div>
+      </footer>
+    </div>
+  </body>
 </html>
