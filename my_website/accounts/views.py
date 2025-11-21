@@ -1,21 +1,25 @@
-from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth import login, logout, get_user_model
-from django.urls import reverse
-from django.core.mail import send_mail
 from django.contrib import messages
-from .tokens import generate_login_token, generate_verification_token, verify_login_token, verify_verification_token
 from django.contrib.admin.views.decorators import staff_member_required
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
-
-# Host Email
-sender = os.getenv("EMAIL_HOST_USER")
+from .tokens import verify_login_token, verify_verification_token
+from .services import send_verification_email, send_login_email
+from .rate_limit import is_rate_limited
 
 User = get_user_model()
 
-# Create your views here.
+LOGIN_RATE_LIMIT = {"limit": 5, "window": 15 * 60}
+REGISTER_RATE_LIMIT = {"limit": 3, "window": 60 * 60}
+
+
+def _rate_limit_email(request, email, action, limit_config):
+    if is_rate_limited(action, email.lower(), limit_config["limit"], limit_config["window"]):
+        messages.error(request, "Too many requests. Please try again later.")
+        return True
+    return False
+
+
 def register(request):
     if request.method == "GET":
         return render(request, "accounts/register.html")
@@ -23,20 +27,14 @@ def register(request):
     email = request.POST.get("email")
     name = request.POST.get("name")
     # Gets whether the User want to be part of the mailing list
-    mailing_list = request.POST.get("mailing_list")
-    if mailing_list == None:
-        mailing_list = False
+    mailing_list = bool(request.POST.get("mailing_list"))
+
+    if _rate_limit_email(request, email, "register", REGISTER_RATE_LIMIT):
+        return redirect("accounts:register")
 
     if User.objects.filter(email=email).exists():
         if User.objects.get(email=email).is_verified != True:
-            token = generate_verification_token({"email": email})
-            url = request.build_absolute_uri(reverse("accounts:verify") + f"?token={token}")
-            send_mail(
-                "Verify your account",
-                f"Click to verify your email:\n\n{url}",
-                sender,
-                [email],
-                )
+            send_verification_email(request, email)
             return HttpResponse("Email already exisits, Check your email to verify")
 
         messages.error(request, "Email already registered")
@@ -48,16 +46,7 @@ def register(request):
         mailing_list=mailing_list
         )
 
-    # Send the Verification Email Might extract into a seperate Helper method
-    token = generate_verification_token({"email": email})
-    url = request.build_absolute_uri(reverse("accounts:verify") + f"?token={token}")
-    send_mail(
-        "Verify your account",
-        f"Click to verify your email:\n\n{url}",
-        sender,
-        [email],
-        fail_silently=False
-    )
+    send_verification_email(request, email)
     return HttpResponse("Check your email")
 
 def login_request(request):
@@ -65,6 +54,9 @@ def login_request(request):
         return render(request, "accounts/login.html")
     # POST
     email = request.POST.get("email")
+
+    if _rate_limit_email(request, email, "login", LOGIN_RATE_LIMIT):
+        return redirect("accounts:login")
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
@@ -72,17 +64,9 @@ def login_request(request):
         return redirect("accounts:login")
 
     if not user.is_verified:
-        messages.error("Please verify your email address")
+        messages.error(request, "Please verify your email address")
         return redirect("accounts:login")
-    token = generate_login_token({"email": email})
-    url = request.build_absolute_uri(reverse("accounts:login_confirm") + f"?token={token}")
-    send_mail(
-        "Your login link",
-        f"Click here to log in:\n\n{url}",
-        sender,
-        [email],
-        fail_silently=False
-    )
+    send_login_email(request, email)
     return HttpResponse("login success, Check your Email")
 
 def verify_email(request):
@@ -92,7 +76,7 @@ def verify_email(request):
     if not data:
         return HttpResponse("invalid token")
 
-    user = User.objects.get(email=data["email"])
+    user = User.objects.get(email=data.email)
     user.is_verified = True
     user.save()
 
@@ -104,7 +88,7 @@ def login_confirm(request):
 
     if not data:
         return render(request, "accounts/invalid_token.html")
-    user = User.objects.get(email=data["email"])
+    user = User.objects.get(email=data.email)
     login(request, user)
     return redirect("core:landing")
 
@@ -122,9 +106,10 @@ def delete_user(request, email):
 
     except User.DoesNotExist:
         messages.error(request, "User dosn't exist")
-        return render(request, 'core:landing')
+        return redirect('core:landing')
 
     except Exception as e:
-        return render(request, 'core:landing',{'error':e.message})
+        messages.error(request, f"Unexpected error: {e}")
+        return redirect('core:landing')
 
-    return render(request, 'core:landing')
+    return redirect('core:landing')
