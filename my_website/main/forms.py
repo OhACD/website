@@ -18,6 +18,18 @@ class RegisterForm(forms.ModelForm):
         model = User
         fields = ['email', 'name', 'mailing_list']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        base_input = "w-full rounded-xl border border-brand-baseMuted bg-brand-base px-4 py-3 text-brand-text placeholder-brand-textMuted focus:border-brand-accentMint focus:outline-none focus:ring-2 focus:ring-brand-accentMint/50"
+        checkbox = "h-4 w-4 rounded border-brand-baseMuted text-brand-accentMint focus:ring-brand-accentMint/60"
+        for name, field in self.fields.items():
+            widget = field.widget
+            if isinstance(widget, forms.CheckboxInput):
+                widget.attrs['class'] = f"{widget.attrs.get('class', '')} {checkbox}".strip()
+            else:
+                widget.attrs['class'] = f"{widget.attrs.get('class', '')} {base_input}".strip()
+                widget.attrs.setdefault('placeholder', field.label)
+
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")

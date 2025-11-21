@@ -1,7 +1,22 @@
 {% extends "main/layout.html" %}
-    {% block body %}
-        <h1>Hello, user!</h>
-        <p>This should be up and running in no time just keep it tight</p>
-        <a href="{% url 'login' %}" method="get">Log in</a>
-        <a href="{% url 'signup' %}" method="get">Sign up</a>
-    {% endblock %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+<div class="space-y-6">
+  <h1 class="text-3xl font-semibold text-brand-text">Welcome back, {{ request.user.first_name|default:request.user.email }}</h1>
+  <p class="text-brand-textMuted">Choose where to head next.</p>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <a href="{% url 'login' %}"
+       class="rounded-2xl border border-brand-baseMuted/50 bg-brand-base/70 p-6 text-brand-text transition hover:border-brand-accentMint/60">
+      <p class="text-sm text-brand-textMuted">Log back in</p>
+      <p class="mt-2 text-xl font-semibold">Authentication portal</p>
+    </a>
+    <a href="{% url 'logout' %}"
+       class="rounded-2xl border border-brand-baseMuted/30 bg-brand-baseAlt/80 p-6 text-brand-accentLavender transition hover:bg-brand-baseAlt">
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-textMuted">Session</p>
+      <p class="mt-2 text-xl font-semibold">Sign out</p>
+    </a>
+  </div>
+</div>
+{% endblock %}

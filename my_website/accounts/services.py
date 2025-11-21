@@ -1,3 +1,9 @@
+"""
+Email service functions for sending magic link emails.
+
+This module handles asynchronous email sending for verification and login links.
+"""
+
 import asyncio
 import os
 from functools import partial
@@ -12,16 +18,47 @@ SENDER_EMAIL = os.getenv("EMAIL_HOST_USER")
 
 
 def _build_magic_link(request, url_name, token):
+    """
+    Build absolute URL for magic link.
+
+    Args:
+        request: Django request object
+        url_name: URL name pattern
+        token: Authentication token
+
+    Returns:
+        Absolute URL string
+    """
     return request.build_absolute_uri(f"{reverse(url_name)}?token={token}")
 
 
 async def _send_mail_async(*args, **kwargs):
+    """
+    Send email asynchronously in a thread pool.
+
+    Args:
+        *args: Positional arguments for send_mail
+        **kwargs: Keyword arguments for send_mail
+    """
     loop = asyncio.get_event_loop()
     send = partial(send_mail, *args, **kwargs)
     await loop.run_in_executor(None, send)
 
 
 def send_verification_email(request, email):
+    """
+    Send email verification link to user.
+
+    Args:
+        request: Django request object
+        email: Recipient email address
+
+    Returns:
+        Verification URL string
+
+    Raises:
+        Exception: If email sending fails
+    """
     token = generate_verification_token(email)
     url = _build_magic_link(request, "accounts:verify", token)
     async_to_sync(_send_mail_async)(
@@ -35,6 +72,19 @@ def send_verification_email(request, email):
 
 
 def send_login_email(request, email):
+    """
+    Send magic login link to user.
+
+    Args:
+        request: Django request object
+        email: Recipient email address
+
+    Returns:
+        Login URL string
+
+    Raises:
+        Exception: If email sending fails
+    """
     token = generate_login_token(email)
     url = _build_magic_link(request, "accounts:login_confirm", token)
     async_to_sync(_send_mail_async)(

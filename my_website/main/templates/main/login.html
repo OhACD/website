@@ -1,19 +1,47 @@
 {% extends "main/layout.html" %}
 
+{% block title %}Login{% endblock %}
+
 {% block body %}
-<h1>Login</h1>
+<div class="space-y-6">
+  <header>
+    <p class="text-sm uppercase tracking-[0.3em] text-brand-textMuted/70">Portal</p>
+    <h1 class="mt-3 text-3xl font-semibold text-brand-text">Sign in</h1>
+    <p class="mt-2 text-brand-textMuted">Use your account credentials to access the dashboard.</p>
+  </header>
 
-{% if message %}
-    <div class="message">{{ message }}</div>
-{% endif %}
+  {% if message %}
+  <div class="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+    {{ message }}
+  </div>
+  {% endif %}
 
-<form method="post">
+  {% if form.non_field_errors %}
+  <div class="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+    {{ form.non_field_errors|join:" " }}
+  </div>
+  {% endif %}
+
+  <form method="post" class="space-y-5">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
+    {% for field in form %}
+    <div class="space-y-2">
+      <label class="text-sm text-brand-textMuted" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+      <p class="text-sm text-red-300">{{ field.errors|join:", " }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit"
+            class="w-full rounded-xl bg-brand-accentMint px-6 py-3 font-semibold text-brand-base transition hover:bg-brand-accentMint/80">
+      Login
+    </button>
+  </form>
 
-<p style="text-align:center; margin-top: 10px;">
-    Don't have an account? <a href="{% url 'register' %}">Register</a>
-</p>
+  <p class="text-center text-sm text-brand-textMuted">
+    Need an account?
+    <a href="{% url 'register' %}" class="text-brand-accentSky hover:text-brand-accentMint">Register</a>
+  </p>
+</div>
 {% endblock %}

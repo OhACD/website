@@ -2,6 +2,11 @@
 *.pyc
 __pycache__/
 
+# Node.js
+node_modules/
+package-lock.json
+package.json
+
 # Django
 *.sqlite3
 *.log

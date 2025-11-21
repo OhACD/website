@@ -1,9 +1,31 @@
 {% extends "main/layout.html" %}
-    {% block body %}
-    <h1>Welcome, {{request.user.first_name}}</h1>
-    <ul>
-        <li>Username: {{request.user.username}}</li>
-        <li>Email: {{request.user.email}}</li>
-    </ul>
-    <a href="{% url 'logout' %}">Log Out</a>
-    {% endblock %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+<div class="space-y-6">
+  <div>
+    <p class="text-sm uppercase tracking-[0.3em] text-brand-textMuted/70">Profile</p>
+    <h1 class="mt-2 text-3xl font-semibold text-brand-text">Hey, {{ request.user.first_name|default:"friend" }}</h1>
+    <p class="mt-2 text-brand-textMuted">Here’s the data tied to your session.</p>
+  </div>
+
+  <div class="rounded-2xl border border-brand-baseMuted/40 bg-brand-base/70 p-6">
+    <dl class="space-y-4">
+      <div>
+        <dt class="text-xs uppercase tracking-[0.3em] text-brand-textMuted">Username</dt>
+        <dd class="text-xl text-brand-text">{{ request.user.username }}</dd>
+      </div>
+      <div>
+        <dt class="text-xs uppercase tracking-[0.3em] text-brand-textMuted">Email</dt>
+        <dd class="text-xl text-brand-text">{{ request.user.email }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <a href="{% url 'logout' %}"
+     class="inline-flex items-center justify-center rounded-xl border border-brand-accentMint/60 px-6 py-3 text-brand-accentMint transition hover:bg-brand-base/70">
+    Log out
+  </a>
+</div>
+{% endblock %}

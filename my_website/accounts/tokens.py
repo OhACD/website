@@ -1,3 +1,10 @@
+"""
+Token generation and verification for magic links.
+
+This module handles creation and validation of secure tokens for email
+verification and passwordless login.
+"""
+
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import Optional
@@ -7,11 +14,21 @@ from django.utils import timezone
 
 from .models import MagicLink
 
+# Salt for token signing to prevent tampering
 MAGIC_LINK_SALT = "magic-link"
 
 
 @dataclass
 class TokenPayload:
+    """
+    Payload structure for magic link tokens.
+
+    Attributes:
+        email: User's email address
+        exp: Expiration timestamp
+        token_id: UUID of the MagicLink record
+        token_type: Type of token (LOGIN or VERIFY)
+    """
     email: str
     exp: float
     token_id: str
@@ -19,6 +36,17 @@ class TokenPayload:
 
 
 def _stamp_payload(email: str, expires: int, token_type: str) -> TokenPayload:
+    """
+    Create a token payload and associated MagicLink record.
+
+    Args:
+        email: User's email address
+        expires: Expiration time in seconds
+        token_type: Type of token (LOGIN or VERIFY)
+
+    Returns:
+        TokenPayload instance
+    """
     expires_at = timezone.now() + timedelta(seconds=expires)
     magic_link = MagicLink.objects.create(
         email=email,
@@ -34,18 +62,58 @@ def _stamp_payload(email: str, expires: int, token_type: str) -> TokenPayload:
 
 
 def _generate_token(payload: TokenPayload) -> str:
+    """
+    Generate a signed token from payload.
+
+    Args:
+        payload: TokenPayload instance
+
+    Returns:
+        Signed token string
+    """
     return signing.dumps(payload.__dict__, salt=MAGIC_LINK_SALT)
 
 
 def generate_login_token(email: str, expires: int = 1800) -> str:
+    """
+    Generate a login magic link token.
+
+    Args:
+        email: User's email address
+        expires: Expiration time in seconds (default: 30 minutes)
+
+    Returns:
+        Signed token string
+    """
     return _generate_token(_stamp_payload(email, expires, MagicLink.TokenType.LOGIN))
 
 
 def generate_verification_token(email: str, expires: int = 60 * 60 * 24) -> str:
+    """
+    Generate an email verification token.
+
+    Args:
+        email: User's email address
+        expires: Expiration time in seconds (default: 24 hours)
+
+    Returns:
+        Signed token string
+    """
     return _generate_token(_stamp_payload(email, expires, MagicLink.TokenType.VERIFY))
 
 
 def _verify_token(token: str, max_age: int, token_type: str) -> Optional[TokenPayload]:
+    """
+    Verify and validate a magic link token.
+
+    Args:
+        token: Signed token string
+        max_age: Maximum age in seconds
+        token_type: Expected token type (LOGIN or VERIFY)
+
+    Returns:
+        TokenPayload if valid, None otherwise
+    """
     try:
         data = signing.loads(token, salt=MAGIC_LINK_SALT, max_age=max_age)
         payload = TokenPayload(**data)
@@ -67,8 +135,28 @@ def _verify_token(token: str, max_age: int, token_type: str) -> Optional[TokenPa
 
 
 def verify_login_token(token: str, max_age: int = 1800) -> Optional[TokenPayload]:
+    """
+    Verify a login magic link token.
+
+    Args:
+        token: Signed token string
+        max_age: Maximum age in seconds (default: 30 minutes)
+
+    Returns:
+        TokenPayload if valid, None otherwise
+    """
     return _verify_token(token, max_age, MagicLink.TokenType.LOGIN)
 
 
 def verify_verification_token(token: str, max_age: int = 60 * 60 * 24) -> Optional[TokenPayload]:
+    """
+    Verify an email verification token.
+
+    Args:
+        token: Signed token string
+        max_age: Maximum age in seconds (default: 24 hours)
+
+    Returns:
+        TokenPayload if valid, None otherwise
+    """
     return _verify_token(token, max_age, MagicLink.TokenType.VERIFY)

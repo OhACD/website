@@ -1,15 +1,48 @@
 {% extends "main/layout.html" %}
 
+{% block title %}Register{% endblock %}
+
 {% block body %}
-<h1>Sign Up</h1>
+<div class="space-y-6">
+  <header>
+    <p class="text-sm uppercase tracking-[0.3em] text-brand-textMuted/70">Join</p>
+    <h1 class="mt-3 text-3xl font-semibold text-brand-text">Create an account</h1>
+    <p class="mt-2 text-brand-textMuted">We’ll keep you in the loop with launches and releases.</p>
+  </header>
 
-{% if message %}
-    <div class="message">{{ message }}</div>
-{% endif %}
+  {% if message %}
+  <div class="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+    {{ message }}
+  </div>
+  {% endif %}
 
-<form method="post">
+  {% if form.non_field_errors %}
+  <div class="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+    {{ form.non_field_errors|join:" " }}
+  </div>
+  {% endif %}
+
+  <form method="post" class="space-y-5">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Account</button>
-</form>
+    {% for field in form %}
+    <div class="space-y-2">
+      <label class="text-sm text-brand-textMuted" for="{{ field.id_for_label }}">
+        {{ field.label }}
+        {% if field.field.required %}<span class="text-brand-accentLavender">*</span>{% endif %}
+      </label>
+      {{ field }}
+      {% if field.help_text %}
+      <p class="text-xs text-brand-textMuted">{{ field.help_text }}</p>
+      {% endif %}
+      {% if field.errors %}
+      <p class="text-sm text-red-300">{{ field.errors|join:", " }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit"
+            class="w-full rounded-xl bg-brand-accentLavender px-6 py-3 font-semibold text-brand-base transition hover:bg-brand-accentLavender/80">
+      Create account
+    </button>
+  </form>
+</div>
 {% endblock %}

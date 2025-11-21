@@ -4,7 +4,9 @@
   "description": "A Django-based personal website project aimed at building an advanced portfolio platform. Currently, the project focuses on backend development, with basic user authentication implemented.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tw:build": "tailwindcss -i ./assets/css/input.css -o ./static/css/output.css -m",
+    "tw:watch": "tailwindcss -i ./assets/css/input.css -o ./static/css/output.css -w"
   },
   "repository": {
     "type": "git",
@@ -21,10 +23,6 @@
   "devDependencies": {
     "autoprefixer": "^10.4.22",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.17"
-  },
-  "dependencies": {
-    "@tailwindcss/cli": "^4.1.17",
-    "@tailwindcss/postcss": "^4.1.17"
+    "tailwindcss": "^3.4.13"
   }
 }
